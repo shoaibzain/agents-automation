@@ -5,7 +5,7 @@ import {runHosted} from '../src/hosted-run.mjs';
 export default async function handler(request,response){
   if(request.method!=='GET')return response.status(405).json({error:'Method not allowed'});
   if(!process.env.CRON_SECRET||request.headers.authorization!==`Bearer ${process.env.CRON_SECRET}`)return response.status(401).json({error:'Unauthorized'});
-  if(!process.env.PARSE_API_KEY||!process.env.BLOB_READ_WRITE_TOKEN)return response.status(503).json({error:'Production storage or marketplace key is not configured'});
+  if(!process.env.PARSE_API_KEY||(!process.env.BLOB_READ_WRITE_TOKEN&&!process.env.BLOB_STORE_ID))return response.status(503).json({error:'Production storage or marketplace key is not configured'});
   try{
     const loaded=await loadState();const day=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Karachi'});
     const existing=loaded.state.runs.find(r=>r.day===day);

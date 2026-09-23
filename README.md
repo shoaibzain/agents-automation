@@ -51,7 +51,7 @@ Open <http://localhost:3100>. The collector moves processed CSV files to `data/p
 Production deploys from the GitHub `main` branch. Create a **private Vercel Blob** store for the project and add these Production environment variables:
 
 - `PARSE_API_KEY`: marketplace provider key
-- `BLOB_READ_WRITE_TOKEN`: added automatically when the Blob store is connected
+- `BLOB_STORE_ID`: added automatically when the private Blob store is connected with Vercel OIDC credentials
 - `CRON_SECRET`: a long random value used by Vercel to authorize the cron request
 
 The included `vercel.json` calls `/api/cron` once daily at `04:00 UTC`, which is `09:00` in Pakistan. Vercel sends `Authorization: Bearer <CRON_SECRET>`. The endpoint rejects unauthenticated calls, records a run lock, and skips a date that has already completed. The initial hosted snapshot is exported from the local database in `seed/agents-automation-state.json`; the first hosted run creates the persistent Blob state.

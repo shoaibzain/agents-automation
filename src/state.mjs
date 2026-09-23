@@ -3,7 +3,7 @@ import seed from '../seed/agents-automation-state.json' with { type: 'json' };
 const clone=value=>structuredClone(value);
 
 export async function loadState(){
-  if(!process.env.BLOB_READ_WRITE_TOKEN)return {state:clone(seed),etag:null,persistent:false};
+  if(!process.env.BLOB_READ_WRITE_TOKEN&&!process.env.BLOB_STORE_ID)return {state:clone(seed),etag:null,persistent:false};
   const {get}=await import('@vercel/blob');
   const result=await get('agents-automation/state.json',{access:'private',useCache:false});
   if(!result)return {state:clone(seed),etag:null,persistent:true};
@@ -12,7 +12,7 @@ export async function loadState(){
 }
 
 export async function saveState(state,etag){
-  if(!process.env.BLOB_READ_WRITE_TOKEN)throw Error('BLOB_READ_WRITE_TOKEN is not configured');
+  if(!process.env.BLOB_READ_WRITE_TOKEN&&!process.env.BLOB_STORE_ID)throw Error('Vercel Blob storage is not configured');
   const {put}=await import('@vercel/blob');
   return put('agents-automation/state.json',JSON.stringify(state),{
     access:'private',addRandomSuffix:false,allowOverwrite:true,contentType:'application/json',cacheControlMaxAge:60,
