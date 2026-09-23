@@ -1,0 +1,20 @@
+{
+  "source": "parsebot",
+  "searches": [
+    {"query": "home organizer"},
+    {"query": "beauty"},
+    {"query": "mobile accessories"},
+    {"query": "kitchen gadgets"},
+    {"query": "fashion accessories"},
+    {"query": "fitness"}
+  ],
+  "pagesPerSearch": 1,
+  "maxCallsPerRun": 6,
+  "priceMin": 500,
+  "priceMax": 3000,
+  "watchlistLimit": 21,
+  "watchlistChecksPerRun": 3,
+  "feedUrl": "",
+  "currency": "PKR",
+  "port": 3100
+}

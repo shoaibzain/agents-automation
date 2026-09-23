@@ -1,0 +1,1 @@
+{"name":"agents-automation","private":true,"type":"module","scripts":{"run":"node src/run.mjs","serve":"node src/server.mjs","test":"node --test"},"engines":{"node":">=22.13"}}
