@@ -2,6 +2,8 @@ import config from '../config.example.json' with {type:'json'};
 import {loadState,saveState} from '../src/state.mjs';
 import {runHosted} from '../src/hosted-run.mjs';
 
+export const maxDuration=300;
+
 export default async function handler(request,response){
   if(request.method!=='GET')return response.status(405).json({error:'Method not allowed'});
   if(!process.env.CRON_SECRET||request.headers.authorization!==`Bearer ${process.env.CRON_SECRET}`)return response.status(401).json({error:'Unauthorized'});
