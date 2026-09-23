@@ -1,0 +1,11 @@
+import {DatabaseSync} from 'node:sqlite';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {resolve,join} from 'node:path';
+const root=resolve(import.meta.dirname,'..'),db=new DatabaseSync(join(root,'data','agents-automation.sqlite'),{readOnly:true});
+const state={version:1,runs:db.prepare('SELECT day,started_at,finished_at,status,source,imported,error FROM runs ORDER BY day').all(),products:{},snapshots:{},watchlist:{},settings:{}};
+for(const row of db.prepare('SELECT * FROM products').all())state.products[row.id]=row;
+for(const row of db.prepare('SELECT * FROM snapshots ORDER BY product_id,day').all())(state.snapshots[row.product_id]??=[]).push(row);
+for(const row of db.prepare('SELECT * FROM watchlist').all())state.watchlist[row.product_id]=row;
+for(const row of db.prepare('SELECT * FROM settings').all())state.settings[row.key]=row.value;
+db.close();await mkdir(join(root,'seed'),{recursive:true});await writeFile(join(root,'seed','agents-automation-state.json'),JSON.stringify(state));
+console.log(`Exported ${Object.keys(state.products).length} products and ${Object.keys(state.watchlist).length} watchlist items`);

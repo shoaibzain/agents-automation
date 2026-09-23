@@ -6,7 +6,7 @@ import { analyze } from './core.mjs';
 
 const root=resolve(import.meta.dirname,'..'),dataDir=resolve(process.env.AGENTS_AUTOMATION_DATA_DIR||process.env.DARAZ_DATA_DIR||join(root,'data'));
 const config=JSON.parse(await readFile(join(root,'config.json'),'utf8').catch(()=>'{"port":3100}'));
-const html=await readFile(join(root,'web','index.html'));
+const html=await readFile(join(root,'public','index.html'));
 const port=Number(process.env.PORT||config.port||3100);
 createServer((req,res)=>{
   if(req.method!=='GET'){res.writeHead(405);return res.end()}

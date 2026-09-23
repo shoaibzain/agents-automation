@@ -1,6 +1,6 @@
 # Agents Automation
 
-Working MVP for **one daily run**. It can automatically discover Daraz Pakistan listings through a marketplace search API, save daily snapshots in SQLite, compare historical values, and show a local dashboard. CSV and HTTPS JSON feeds remain available as alternatives. It does **not** crawl Daraz catalog search pages or claim that a sampled search covers every listing.
+Working MVP for **one daily run**. It can automatically discover Daraz Pakistan listings through a marketplace search API, save daily snapshots, compare historical values, and show a dashboard. Local runs use SQLite; Vercel production uses private Vercel Blob storage. CSV and HTTPS JSON feeds remain available as alternatives. It does **not** crawl Daraz catalog search pages or claim that a sampled search covers every listing.
 
 ## Requirements
 
@@ -45,6 +45,18 @@ node src/server.mjs
 ```
 
 Open <http://localhost:3100>. The collector moves processed CSV files to `data/processed/`. A completed day cannot be rerun, protecting history from accidental overwrite. To test historical snapshots, `AGENTS_AUTOMATION_RUN_DAY=YYYY-MM-DD` can set the run date; do not use this for routine collection. The previous environment name remains accepted for compatibility.
+
+## Vercel production deployment
+
+Production deploys from the GitHub `main` branch. Create a **private Vercel Blob** store for the project and add these Production environment variables:
+
+- `PARSE_API_KEY`: marketplace provider key
+- `BLOB_READ_WRITE_TOKEN`: added automatically when the Blob store is connected
+- `CRON_SECRET`: a long random value used by Vercel to authorize the cron request
+
+The included `vercel.json` calls `/api/cron` once daily at `04:00 UTC`, which is `09:00` in Pakistan. Vercel sends `Authorization: Bearer <CRON_SECRET>`. The endpoint rejects unauthenticated calls, records a run lock, and skips a date that has already completed. The initial hosted snapshot is exported from the local database in `seed/agents-automation-state.json`; the first hosted run creates the persistent Blob state.
+
+The public dashboard calls `/api/report`. API keys and the private Blob token stay in Vercel server environment variables and are never sent to the browser. After the production cron is verified, disable the Windows scheduled task to avoid duplicate provider calls. Vercel cron schedules use UTC, and Hobby plans run daily jobs with coarse timing rather than exact-to-the-minute execution.
 
 For marketplace discovery or a recurring feed, run `./install-agents-automation-task.ps1 -Time '09:00'` in PowerShell. This registers a Windows task under the current user. The runner reads the user API key at each run and appends results/errors to `data/agents-automation.log`. The PC must be on and its timezone set to Pakistan time. For a one-off CSV, the task will need a new CSV each day. Start the dashboard separately when you want to view results.
 

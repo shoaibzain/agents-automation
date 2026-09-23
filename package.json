@@ -1,1 +1,1 @@
-{"name":"agents-automation","private":true,"type":"module","scripts":{"run":"node src/run.mjs","serve":"node src/server.mjs","test":"node --test"},"engines":{"node":">=22.13"}}
+{"name":"agents-automation","private":true,"type":"module","scripts":{"run":"node src/run.mjs","serve":"node src/server.mjs","export-state":"node scripts/export-state.mjs","test":"node --test"},"dependencies":{"@vercel/blob":"^2.3.0"},"engines":{"node":">=22.13"}}
